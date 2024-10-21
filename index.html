@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equation Solver</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .header h2 {
+            font-size: 22px;
+            margin: 5px 0;
+        }
+
+        .header h3 {
+            font-size: 18px;
+            font-weight: normal;
+            margin: 5px 0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 14px;
+            font-weight: normal;
+            border-top: 1px solid black;
+            padding-top: 10px;
+        }
+
+        .content {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        input {
+            margin: 5px;
+            padding: 5px;
+        }
+
+        button {
+            padding: 10px;
+            margin: 10px;
+        }
+    </style>
+    <script>
+        function solveSecondOrder() {
+            var a = parseFloat(document.getElementById("a2").value);
+            var b = parseFloat(document.getElementById("b2").value);
+            var c = parseFloat(document.getElementById("c2").value);
+
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                document.getElementById("result2").innerHTML = "Please enter valid numbers.";
+                return;
+            }
+
+            var discriminant = b * b - 4 * a * c;
+            var result = "";
+
+            if (discriminant > 0) {
+                var x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                var x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                result = "Two real roots: x1 = " + x1 + ", x2 = " + x2;
+            } else if (discriminant === 0) {
+                var x = -b / (2 * a);
+                result = "One real root: x = " + x;
+            } else {
+                var realPart = -b / (2 * a);
+                var imaginaryPart = Math.sqrt(-discriminant) / (2 * a);
+                result = "Two complex roots: x1 = " + realPart + " + " + imaginaryPart + "i, x2 = " + realPart + " - " + imaginaryPart + "i";
+            }
+            document.getElementById("result2").innerHTML = result;
+        }
+
+        function solveCubic() {
+            var a = parseFloat(document.getElementById("a3").value);
+            var b = parseFloat(document.getElementById("b3").value);
+            var c = parseFloat(document.getElementById("c3").value);
+            var d = parseFloat(document.getElementById("d3").value);
+
+            if (isNaN(a) || isNaN(b) || isNaN(c) || isNaN(d)) {
+                document.getElementById("result3").innerHTML = "Please enter valid numbers.";
+                return;
+            }
+
+            if (a === 0) {
+                document.getElementById("result3").innerHTML = "Coefficient 'a' cannot be zero for a cubic equation.";
+                return;
+            }
+
+            // Normalize the coefficients (we divide everything by 'a' so that the cubic term's coefficient is 1)
+            var A = b / a;
+            var B = c / a;
+            var C = d / a;
+
+            // Compute discriminants and intermediate terms
+            var Q = (3 * B - A * A) / 9;
+            var R = (9 * A * B - 27 * C - 2 * A * A * A) / 54;
+            var D = Q * Q * Q + R * R; // Discriminant
+
+            var result = "";
+
+            if (D > 0) {
+                // One real root and two complex conjugate roots
+                var S = Math.cbrt(R + Math.sqrt(D));
+                var T = Math.cbrt(R - Math.sqrt(D));
+                var realRoot = -A / 3 + (S + T);
+                var realPart = -A / 3 - (S + T) / 2;
+                var imaginaryPart = Math.sqrt(3) * (S - T) / 2;
+
+                result = "One real root: x1 = " + realRoot + "<br>" +
+                    "Two complex roots: x2 = " + realPart + " + " + imaginaryPart + "i, x3 = " + realPart + " - " + imaginaryPart + "i";
+            } else if (D === 0) {
+                // All roots are real, at least two are equal
+                var S = Math.cbrt(R);
+                var realRoot1 = -A / 3 + 2 * S;
+                var realRoot2 = -A / 3 - S;
+
+                result = "Two real roots: x1 = " + realRoot1 + " (double root), x2 = " + realRoot2;
+            } else {
+                // Three real roots
+                var theta = Math.acos(R / Math.sqrt(-Q * Q * Q));
+                var x1 = 2 * Math.sqrt(-Q) * Math.cos(theta / 3) - A / 3;
+                var x2 = 2 * Math.sqrt(-Q) * Math.cos((theta + 2 * Math.PI) / 3) - A / 3;
+                var x3 = 2 * Math.sqrt(-Q) * Math.cos((theta + 4 * Math.PI) / 3) - A / 3;
+
+                result = "Three real roots: x1 = " + x1 + ", x2 = " + x2 + ", x3 = " + x3;
+            }
+
+            document.getElementById("result3").innerHTML = result;
+        }
+
+        function solveLinearSystem() {
+            var a1 = parseFloat(document.getElementById("a1").value);
+            var b1 = parseFloat(document.getElementById("b1").value);
+            var c1 = parseFloat(document.getElementById("c1").value);
+            var d1 = parseFloat(document.getElementById("d1").value);
+            var a2 = parseFloat(document.getElementById("a2l").value);
+            var b2 = parseFloat(document.getElementById("b2l").value);
+            var c2 = parseFloat(document.getElementById("c2l").value);
+            var d2 = parseFloat(document.getElementById("d2").value);
+            var a3 = parseFloat(document.getElementById("a3l").value);
+            var b3 = parseFloat(document.getElementById("b3l").value);
+            var c3 = parseFloat(document.getElementById("c3l").value);
+            var d3 = parseFloat(document.getElementById("d3l").value);
+
+            if (isNaN(a1) || isNaN(b1) || isNaN(c1) || isNaN(d1) ||
+                isNaN(a2) || isNaN(b2) || isNaN(c2) || isNaN(d2) ||
+                isNaN(a3) || isNaN(b3) || isNaN(c3) || isNaN(d3)) {
+                document.getElementById("resultLinear").innerHTML = "Please enter valid numbers.";
+                return;
+            }
+
+            // Using Cramer's Rule
+            var D = a1 * (b2 * c3 - b3 * c2) - b1 * (a2 * c3 - a3 * c2) + c1 * (a2 * b3 - a3 * b2);
+            var Dx = d1 * (b2 * c3 - b3 * c2) - b1 * (d2 * c3 - d3 * c2) + c1 * (d2 * b3 - d3 * b2);
+            var Dy = a1 * (d2 * c3 - d3 * c2) - d1 * (a2 * c3 - a3 * c2) + c1 * (a2 * d3 - a3 * d2);
+            var Dz = a1 * (b2 * d3 - b3 * d2) - b1 * (a2 * d3 - a3 * d2) + d1 * (a2 * b3 - a3 * b2);
+
+            var result = "";
+
+            if (D != 0) {
+                var X = Dx / D;
+                var Y = Dy / D;
+                var Z = Dz / D;
+                result = "X = " + X + ", Y = " + Y + ", Z = " + Z;
+            } else {
+                result = "No unique solution exists (D = 0).";
+            }
+
+            document.getElementById("resultLinear").innerHTML = result;
+        }
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>Northern Technical University</h1>
+        <h2>Technical Engineering College</h2>
+        <h3>Chemical and Petroleum Industries Technologies Engineering</h3>
+        <h3>Designed by: Azam Isam</h3>
+ <div class="footer">
+        <h3>Equations Solver</h3>
+    </div>
+</body>
+    </div>
+
+    <div class="content">
+        <h2>Second Order Equation: ax² + bx + c = 0</h2>
+        <label for="a2">a: </label>
+        <input type="text" id="a2" value="1"><br>
+        <label for="b2">b: </label>
+        <input type="text" id="b2" value="0"><br>
+        <label for="c2">c: </label>
+        <input type="text" id="c2" value="0"><br>
+        <button onclick="solveSecondOrder()">Solve Second Order Equation</button>
+        <p id="result2"></p>
+
+        <h2>Third Order Equation: ax³ + bx² + cx + d = 0</h2>
+        <label for="a3">a: </label>
+        <input type="text" id="a3" value="1"><br>
+        <label for="b3">b: </label>
+        <input type="text" id="b3" value="0"><br>
+        <label for="c3">c: </label>
+        <input type="text" id="c3" value="0"><br>
+        <label for="d3">d: </label>
+        <input type="text" id="d3" value="0"><br>
+        <button onclick="solveCubic()">Solve Third Order Equation</button>
+        <p id="result3"></p>
+
+        <h2>Solve 3 First-Order Equations with X, Y, Z</h2>
+        <label>a1 * X + b1 * Y + c1 * Z = d1</label><br>
+        <input type="text" id="a1" placeholder="a1"> 
+        <input type="text" id="b1" placeholder="b1"> 
+        <input type="text" id="c1" placeholder="c1"> 
+        <input type="text" id="d1" placeholder="d1"><br>
+
+        <label>a2 * X + b2 * Y + c2 * Z = d2</label><br>
+        <input type="text" id="a2l" placeholder="a2"> 
+        <input type="text" id="b2l" placeholder="b2"> 
+        <input type="text" id="c2l" placeholder="c2"> 
+        <input type="text" id="d2" placeholder="d2"><br>
+
+        <label>a3 * X + b3 * Y + c3 * Z = d3</label><br>
+        <input type="text" id="a3l" placeholder="a3"> 
+        <input type="text" id="b3l" placeholder="b3"> 
+        <input type="text" id="c3l" placeholder="c3"> 
+        <input type="text" id="d3l" placeholder="d3"><br>
+
+        <button onclick="solveLinearSystem()">Solve System of Equations</button>
+        <p id="resultLinear"></p>
+    </div>
+
+   
+</html>
